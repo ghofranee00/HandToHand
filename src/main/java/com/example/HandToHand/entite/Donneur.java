@@ -11,6 +11,12 @@ public class Donneur  {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    public String getRole() {
+        return role;
+    }
+
+    private final String role = "DONNEUR"; // valeur fixe
+
     @NotBlank(message = "Le nom est obligatoire")
     private String nom;
 

@@ -13,18 +13,44 @@ public class Admin {
     private String pwd;
     private String pwdconf;
     private String image;
+
+    public String getRole() {
+        return role;
+    }
+
+    public List<Orphelin> getOrphelinList() {
+        return orphelinList;
+    }
+
+    public void setOrphelinList(List<Orphelin> orphelinList) {
+        this.orphelinList = orphelinList;
+    }
+
+    public List<Donation> getDonationList() {
+        return donationList;
+    }
+
+    public void setDonationList(List<Donation> donationList) {
+        this.donationList = donationList;
+    }
+
+    private final String role = "ADMIN";
+
     @OneToMany(mappedBy = "admin")
     private List<Orphelin> orphelinList;
     @OneToMany(mappedBy = "admin")
     private List<Donation> donationList;
 
-    public Admin(Long id, String nom, String prenom, String pwd, String pwdconf, String image) {
+
+    public Admin(Long id, String nom, String prenom, String pwd, String pwdconf, String image, List<Orphelin> orphelinList, List<Donation> donationList) {
         this.id = id;
         this.nom = nom;
         this.prenom = prenom;
         this.pwd = pwd;
         this.pwdconf = pwdconf;
         this.image = image;
+        this.orphelinList = orphelinList;
+        this.donationList = donationList;
     }
 
     public Long getId() {

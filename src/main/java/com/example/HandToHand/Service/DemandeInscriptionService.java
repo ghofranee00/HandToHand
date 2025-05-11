@@ -13,7 +13,7 @@ public interface DemandeInscriptionService {
 
     void accepterDemande(Long id);
     void refuserAllDemandes();
-
+     DemandeInscription trouverParId(Long id);
     // Accepter toutes les demandes
     void accepterAllDemandes();
     DemandeInscription trouverParEmail(String email);
