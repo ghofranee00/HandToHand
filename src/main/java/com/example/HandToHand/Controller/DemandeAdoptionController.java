@@ -1,19 +1,18 @@
 package com.example.HandToHand.Controller;
 
 import com.example.HandToHand.Service.DemandeAdoptionService;
-import com.example.HandToHand.entite.DemandeAdoption;
-import com.example.HandToHand.entite.Donneur;
-import com.example.HandToHand.entite.Orphelin;
-import com.example.HandToHand.repository.Admin.DemandeAdoptionRepository;
-import com.example.HandToHand.repository.Admin.DonneurRepository;
-import com.example.HandToHand.repository.Admin.OrphelinRepository;
+import com.example.HandToHand.entite.*;
+import com.example.HandToHand.repository.Admin.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -28,6 +27,7 @@ public class DemandeAdoptionController {
     private OrphelinRepository orphelinRepository;
     @Autowired
     private DemandeAdoptionRepository demandeAdoptionRepository;
+
 
     @PostMapping
     public ResponseEntity<String> soumettreDemande(@RequestBody DemandeAdoption demandeAdoption) {
@@ -102,4 +102,59 @@ public class DemandeAdoptionController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
+
+
+    @PutMapping("/accepter-all")
+    public ResponseEntity<String> accepterToutesLesDemandes() {
+        demandeAdoptionService.acceptAll(); // C’est cette méthode qu’il faut appeler
+        return ResponseEntity.ok("Toutes les demandes en attente ont été acceptées avec succès.");
+    }
+
+
+
+        @PutMapping("/annuler-adoption/{id}")
+        public ResponseEntity<?> annulerSuivi(@PathVariable Long id, @RequestBody Map<String, String> body) {
+            try {
+                // Appeler le service pour annuler le suivi
+                demandeAdoptionService.annulerAdoption(id, body.get("raison"));
+
+                return ResponseEntity.ok("Suivi d'adoption annulé avec succès.");
+            } catch (RuntimeException e) {
+                // Si le suivi n'est pas trouvé, renvoyer une erreur 404
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Suivi non trouvé.");
+            } catch (Exception e) {
+                // Gérer toute autre exception
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Une erreur est survenue.");
+            }
+        }
+
+    // Endpoint pour récupérer les détails d'un orphelin par son ID
+    @GetMapping("/{orphelinId}")
+    public ResponseEntity<Orphelin> getOrphelinDetaille(@PathVariable Long orphelinId) {
+        try {
+            // Appeler le service pour obtenir l'orphelin
+            Orphelin orphelin = demandeAdoptionService.getOrphelinDetaille(orphelinId);
+            return ResponseEntity.ok(orphelin); // Retourner un statut 200 OK avec l'orphelin
+        } catch (Exception e) {
+            // Retourner une erreur si l'orphelin n'est pas trouvé
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+    @GetMapping("/mes-adoptions")
+    public ResponseEntity<List<SuiviAdoption>> getAdoptionsDonneur(Authentication authentication) {
+        // Récupérer le donneur connecté depuis le contexte de sécurité
+        Donneur donneurConnecte = getDonneurFromAuthentication(authentication);
+
+        List<SuiviAdoption> adoptions = demandeAdoptionService.getAdoptionsByDonneur(donneurConnecte.getId());
+        return ResponseEntity.ok(adoptions);
+    }
+
+    private Donneur getDonneurFromAuthentication(Authentication authentication) {
+        String email = authentication.getName(); // Assure-toi que c'est bien l'email ou username du donneur
+        return donneurRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Donneur non trouvé"));
+    }
+
+
+
 }

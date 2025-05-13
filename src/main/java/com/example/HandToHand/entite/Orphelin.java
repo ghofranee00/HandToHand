@@ -18,6 +18,26 @@ public class Orphelin {
     private String Langues;
     private String Situation;
     private String image;
+    private String sexe;
+
+    public String getSexe() {
+        return sexe;
+    }
+
+    public void setSexe(String sexe) {
+        this.sexe = sexe;
+    }
+
+    @Column(nullable = false)
+    private boolean adopte = false;
+
+    public boolean isAdopte() {
+        return adopte;
+    }
+
+    public void setAdopte(boolean adopte) {
+        this.adopte = adopte;
+    }
 
     @ManyToOne
     @JoinColumn(name = "admin_id")
@@ -29,7 +49,9 @@ public class Orphelin {
     }
 
     // Constructeur avec arguments (existant)
-    public Orphelin(Long ido, String nom, String prenom, Long age, String origine, String personnalite, String scolarité, String passions, String langues, String situation, String image) {
+
+
+    public Orphelin(Long ido, String nom, String prenom, Long age, String origine, String personnalite, String scolarité, String passions, String langues, String situation, String image, String sexe, boolean adopte, Admin admin) {
         this.ido = ido;
         Nom = nom;
         Prenom = prenom;
@@ -41,6 +63,9 @@ public class Orphelin {
         Langues = langues;
         Situation = situation;
         this.image = image;
+        this.sexe = sexe;
+        this.adopte = adopte;
+        this.admin = admin;
     }
 
     public Long getIdo() {

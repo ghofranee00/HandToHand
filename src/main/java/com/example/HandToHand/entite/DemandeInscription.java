@@ -85,6 +85,22 @@ public class DemandeInscription {
     public void setPwd(String pwd) {
         this.pwd = pwd;
     }
+    // Constructeur sans argument
+    public DemandeInscription() {
+    }
+    public DemandeInscription(Long id, String nom, String prenom, String email, String pwd, String pwdconf, String image, String cin, int age, int tel, boolean approuvee) {
+        this.id = id;
+        this.nom = nom;
+        this.prenom = prenom;
+        this.email = email;
+        this.pwd = pwd;
+        this.pwdconf = pwdconf;
+        this.image = image;
+        this.cin = cin;
+        this.age = age;
+        this.tel = tel;
+        this.approuvee = approuvee;
+    }
 
     public String getPwdconf() {
         return pwdconf;

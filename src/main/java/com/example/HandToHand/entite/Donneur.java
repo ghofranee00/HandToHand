@@ -41,8 +41,9 @@ public class Donneur  {
     @Min(value = 18, message = "L'âge minimum est 18 ans")
     private int age;
 
-    @Positive(message = "Le numéro de téléphone doit être positif")
-    private int tel;
+    @Pattern(regexp = "^\\+?\\d{9,15}$", message = "Le numéro de téléphone doit être valide (ex: +21612345678)")
+    private String tel;
+
 
     // Getters et setters
     public String getCin() {
@@ -118,11 +119,11 @@ public class Donneur  {
         this.email = email;
     }
 
-    public int getTel() {
+    public String getTel() {
         return tel;
     }
 
-    public void setTel(int tel) {
+    public void setTel(String tel) {
         this.tel = tel;
     }
 

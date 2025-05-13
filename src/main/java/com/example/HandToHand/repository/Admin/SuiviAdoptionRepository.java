@@ -14,4 +14,6 @@ public interface SuiviAdoptionRepository extends JpaRepository<SuiviAdoption, Lo
 
     // Méthode pour récupérer les suivis d'adoption par Donneur
     List<SuiviAdoption> findByDonneurId(Long donneurId);
+
+    List<SuiviAdoption> findByDonneurIdAndStatutAdoptionNot(Long donneurId, StatutAdoption statutAdoption);
 }

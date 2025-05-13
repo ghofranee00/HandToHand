@@ -24,7 +24,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import java.io.IOException;
 import java.util.Collections;
 
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {

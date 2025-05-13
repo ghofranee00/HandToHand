@@ -2,6 +2,7 @@ package com.example.HandToHand.entite;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -11,8 +12,35 @@ public class SuiviAdoption {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+
+    public SuiviAdoption(Long id, StatutAdoption statutAdoption, String raisonAnnulation, Orphelin orphelin, Donneur donneur, LocalDateTime dateAdoption, String notesSuivi, LocalDateTime dateAnnulation) {
+        this.id = id;
+        this.statutAdoption = statutAdoption;
+        this.raisonAnnulation = raisonAnnulation;
+        this.orphelin = orphelin;
+        this.donneur = donneur;
+        this.dateAdoption = dateAdoption;
+        this.notesSuivi = notesSuivi;
+        this.dateAnnulation = dateAnnulation;
+    }
+
     @Enumerated(EnumType.STRING)
     private StatutAdoption statutAdoption;
+    private String raisonAnnulation;
+
+    public StatutAdoption getStatutAdoption() {
+        return statutAdoption;
+    }
+
+    public String getRaisonAnnulation() {
+        return raisonAnnulation;
+    }
+
+    public void setRaisonAnnulation(String raisonAnnulation) {
+        this.raisonAnnulation = raisonAnnulation;
+    }
+
     @ManyToOne
     @JoinColumn(name = "orphelin_id", nullable = false)
     private Orphelin orphelin;  // Clé étrangère vers l'Orphelin
@@ -70,7 +98,23 @@ public class SuiviAdoption {
     private String notesSuivi;
 
     public void setStatutAdoption(StatutAdoption statutAdoption) {
+        this.statutAdoption = statutAdoption;
     }
+    @UpdateTimestamp
+    private LocalDateTime dateAnnulation;
+
+    public LocalDateTime getDateAnnulation() {
+        return dateAnnulation;
+    }
+
+    public void setDateAnnulation(LocalDateTime dateAnnulation) {
+        this.dateAnnulation = dateAnnulation;
+    }
+
+        // ...
+        public SuiviAdoption() {
+        }
+
 
     // Getters et Setters
 }

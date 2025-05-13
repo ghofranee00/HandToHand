@@ -1,4 +1,4 @@
-package  com.example.HandToHand.config;
+package com.example.HandToHand.config;
 
 import com.example.HandToHand.Service.DonneurService;
 import jakarta.servlet.FilterChain;

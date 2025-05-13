@@ -1,9 +1,6 @@
 package com.example.HandToHand.entite;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
@@ -14,9 +11,38 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    public Donneur getDonneur() {
+        return donneur;
+    }
+
+    public void setDonneur(Donneur donneur) {
+        this.donneur = donneur;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "donneur_id")  // Relation avec l'entité Donneur
+    private Donneur donneur;
+
     private String message;
 
-    private boolean lue = false;
+    private String expediteurRole;
+    private Long expediteurId;
+
+    public String getExpediteurRole() {
+        return expediteurRole;
+    }
+
+    public void setExpediteurRole(String expediteurRole) {
+        this.expediteurRole = expediteurRole;
+    }
+
+    public Long getExpediteurId() {
+        return expediteurId;
+    }
+
+    public void setExpediteurId(Long expediteurId) {
+        this.expediteurId = expediteurId;
+    }
 
     private LocalDateTime dateEnvoi = LocalDateTime.now();
 
@@ -28,10 +54,13 @@ public class Notification {
         return id;
     }
 
-    public Notification(Long id, String message, boolean lue, LocalDateTime dateEnvoi, String destinataireRole, Long destinataireId) {
+
+    public Notification(Long id, Donneur donneur, String message, String expediteurRole, Long expediteurId, LocalDateTime dateEnvoi, String destinataireRole, Long destinataireId) {
         this.id = id;
+        this.donneur = donneur;
         this.message = message;
-        this.lue = lue;
+        this.expediteurRole = expediteurRole;
+        this.expediteurId = expediteurId;
         this.dateEnvoi = dateEnvoi;
         this.destinataireRole = destinataireRole;
         this.destinataireId = destinataireId;
@@ -44,18 +73,20 @@ public class Notification {
     public String getMessage() {
         return message;
     }
+    public Notification(String s, Donneur donneur, String admin) {
+        // Constructeur sans arguments
+    }
 
     public void setMessage(String message) {
         this.message = message;
     }
 
-    public boolean isLue() {
-        return lue;
+
+    public Notification() {
+        // initialisation des propriétés
     }
 
-    public void setLue(boolean lue) {
-        this.lue = lue;
-    }
+
 
     public LocalDateTime getDateEnvoi() {
         return dateEnvoi;
@@ -83,5 +114,11 @@ public class Notification {
 
     public void setDate(LocalDateTime now) {
     }
+
+    public Long getDonneurId() {
+        return null;
+    }
+
+
 // Getters & Setters
 }

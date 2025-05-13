@@ -2,6 +2,8 @@ package com.example.HandToHand.Service;
 
 import com.example.HandToHand.entite.DemandeAdoption;
 import com.example.HandToHand.entite.Donneur;
+import com.example.HandToHand.entite.Orphelin;
+import com.example.HandToHand.entite.SuiviAdoption;
 
 import java.util.List;
 
@@ -20,4 +22,13 @@ public interface DemandeAdoptionService {
     void notifierAdmin(String message);
 
     void soumettreDemande(DemandeAdoption demandeAdoption);
+
+    void acceptAll();
+
+
+    List<SuiviAdoption> getAdoptionsByDonneur(Long donneurId);
+
+    void annulerAdoption(Long suiviId, String raison);
+
+    Orphelin getOrphelinDetaille(Long orphelinId);
 }

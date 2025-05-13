@@ -19,4 +19,10 @@ public interface DonneurService {
     Map<String, Object> getProfileByEmail(String email);
 
     String getEmailFromToken(String token);
+
+    Donneur updateProfile(String email, Map<String, Object> updateRequest);
+
+     void updatePassword(String email, String currentPassword, String newPassword, String confirmPassword) ;
+
+    Donneur getDonneurById(Long donneurId);
 }

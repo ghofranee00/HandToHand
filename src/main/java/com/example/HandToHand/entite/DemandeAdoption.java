@@ -18,6 +18,7 @@ public class DemandeAdoption {
     @JoinColumn(name = "donneur_id", nullable = false)
     private Donneur donneur;
 
+
     @ManyToOne
     @JoinColumn(name = "orphelin_id", nullable = false)
     private Orphelin orphelin;

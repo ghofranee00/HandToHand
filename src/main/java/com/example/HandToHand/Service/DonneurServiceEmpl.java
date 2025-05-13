@@ -7,6 +7,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -59,9 +60,13 @@ public class DonneurServiceEmpl implements DonneurService {
                 "token", token,
                 "user", Map.of(
                         "id", donneur.getId(),
-                        "email", donneur.getEmail(),
                         "nom", donneur.getNom(),
-                        "prenom", donneur.getPrenom()
+                        "prenom", donneur.getPrenom(),
+                        "email", donneur.getEmail(),
+                        "cin", donneur.getCin(),
+                        "tel", donneur.getTel(),
+                        "image", donneur.getImage(),
+                        "age", donneur.getAge()
                 )
         );
     }
@@ -89,7 +94,8 @@ public class DonneurServiceEmpl implements DonneurService {
                     "email", donneur.getEmail(),
                     "cin", donneur.getCin(),
                     "tel", donneur.getTel(),
-                    "image", donneur.getImage()
+                    "image", donneur.getImage(),
+                    "age", donneur.getAge()
             );
         } catch (ExpiredJwtException e) {
             throw new RuntimeException("Session expirée. Veuillez vous reconnecter");
@@ -97,11 +103,57 @@ public class DonneurServiceEmpl implements DonneurService {
             throw new RuntimeException("Token invalide: " + e.getMessage());
         }
     }
+    public Donneur updateProfile(String email, Map<String, Object> updateRequest) {
+        Donneur donneur = donneurRepo.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+
+        donneur.setNom((String) updateRequest.get("nom"));
+        donneur.setPrenom((String) updateRequest.get("prenom"));
+        donneur.setCin((String) updateRequest.get("cin"));
+        // Récupère le téléphone sous forme de String
+        String tel = (String) updateRequest.get("tel");
+
+        // Assure-toi que le numéro de téléphone respecte le format
+        if (!tel.matches("^\\+?\\d{9,15}$")) {
+            throw new RuntimeException("Le numéro de téléphone doit être valide (ex: +21612345678)");
+        }        donneur.setImage((String) updateRequest.get("image"));
+        donneur.setAge(Integer.parseInt(updateRequest.get("age").toString()));
+
+        return donneurRepo.save(donneur);
+    }
+
+
+    public void updatePassword(String email, String currentPassword, String newPassword, String confirmPassword) {
+        Donneur donneur = donneurRepo.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+
+        if (!passwordEncoder.matches(currentPassword, donneur.getPwd())) {
+            throw new RuntimeException("Mot de passe actuel incorrect");
+        }
+
+        if (!newPassword.equals(confirmPassword)) {
+            throw new RuntimeException("Le nouveau mot de passe et la confirmation ne correspondent pas");
+        }
+
+        donneur.setPwd(passwordEncoder.encode(newPassword));
+        donneurRepo.save(donneur);
+    }
+
+    @Override
+    public Donneur getDonneurById(Long donneurId) {
+        return null;
+    }
+
 
     @Override
     public void logout(String token) {
+        // Ajouter le jeton à la liste noire
         blacklistedTokens.add(token);
+
+        // Réinitialiser le contexte de sécurité
+        SecurityContextHolder.clearContext();
     }
+
 
     @Override
     public boolean isTokenBlacklisted(String token) {
@@ -114,22 +166,21 @@ public class DonneurServiceEmpl implements DonneurService {
     }
 
     public Map<String, Object> getProfileByEmail(String email) {
-        Optional<Donneur> donneur = donneurRepo.findByEmail(email);
+        Donneur donneur = donneurRepo.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
 
-        if (donneur.isEmpty()) {
-            return null;
-        }
-
-        Map<String, Object> profile = new HashMap<>();
-        profile.put("email", donneur.get().getEmail());
-        profile.put("name", donneur.get().getNom());
-        profile.put("Prenom", donneur.get().getPrenom());
-        profile.put("tel", donneur.get().getTel());
-        profile.put("cin", donneur.get().getCin());
-        profile.put("image", donneur.get().getImage());
-
-        return profile;
+        return Map.of(
+                "id", donneur.getId(),
+                "nom", donneur.getNom(),
+                "prenom", donneur.getPrenom(),
+                "email", donneur.getEmail(),
+                "cin", donneur.getCin(),
+                "tel", donneur.getTel(),
+                "image", donneur.getImage(),
+                "age", donneur.getAge()
+        );
     }
+
 
     @Override
     public String getEmailFromToken(String token) {
